@@ -1,0 +1,102 @@
+spring:
+  application:
+    name: url-shortener-service
+  
+  datasource:
+    url: jdbc:h2:mem:urlshortener
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  
+  redis:
+    host: localhost
+    port: 6379
+    timeout: 2000ms
+    jedis:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: -1ms
+  
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000 # 1 hour
+
+server:
+  port: 8080
+
+# URL Shortener Configuration
+url-shortener:
+  base-url: http://localhost:8080
+  short-code:
+    length: 7
+    characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+  cache:
+    ttl: 3600 # 1 hour in seconds
+  analytics:
+    enabled: true
+    batch-size: 100
+    flush-interval: 60 # seconds
+  rate-limiting:
+    enabled: true
+    requests-per-minute: 100
+    requests-per-hour: 1000
+  expiration:
+    default-days: 365
+    max-days: 3650 # 10 years
+    cleanup-interval: 86400 # 24 hours in seconds
+
+# Security Configuration
+security:
+  jwt:
+    secret: ${JWT_SECRET:mySecretKey}
+    expiration: 86400000 # 24 hours
+  cors:
+    allowed-origins:
+      - http://localhost:3000
+      - http://localhost:3001
+    allowed-methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
+    allowed-headers:
+      - "*"
+
+# GeoIP Configuration
+geoip:
+  database-path: ${GEOIP_DB_PATH:src/main/resources/GeoLite2-City.mmdb}
+  enabled: false # Set to true if you have GeoIP database
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.example.urlshortener: DEBUG
+    org.springframework.cache: DEBUG
+    org.springframework.security: INFO

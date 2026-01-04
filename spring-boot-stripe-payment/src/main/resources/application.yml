@@ -1,0 +1,60 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:paymentdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  
+  security:
+    user:
+      name: admin
+      password: admin123
+      roles: ADMIN
+
+# Stripe Configuration
+stripe:
+  api:
+    public-key: pk_test_your_public_key_here
+    secret-key: sk_test_your_secret_key_here
+  webhook:
+    secret: whsec_your_webhook_secret_here
+  
+  # Product Configuration
+  products:
+    basic-plan:
+      price-id: price_basic_monthly
+      amount: 999  # $9.99 in cents
+    premium-plan:
+      price-id: price_premium_monthly
+      amount: 1999  # $19.99 in cents
+    enterprise-plan:
+      price-id: price_enterprise_monthly
+      amount: 4999  # $49.99 in cents
+
+# Application Configuration
+app:
+  base-url: http://localhost:8080
+  frontend-url: http://localhost:3000
+  
+logging:
+  level:
+    com.example: DEBUG
+    com.stripe: DEBUG
+    org.springframework.security: DEBUG
+
+server:
+  port: 8080
